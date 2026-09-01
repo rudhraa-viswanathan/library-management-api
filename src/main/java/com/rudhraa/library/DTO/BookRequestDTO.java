@@ -1,10 +1,21 @@
 package com.rudhraa.library.DTO;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class BookRequestDTO {
 
+    @NotBlank(message = "Title is required")
+    @Size(min = 2, max = 100, message = "Title must be between 2 and 100 characters")
     private String title;
+
+    @NotBlank(message = "Author is required")
     private String author;
+
+    @NotBlank(message = "ISBN is required")
     private String isbn;
+
+    @NotBlank(message = "Category is required")
     private String category;
 
     public BookRequestDTO() {

@@ -3,6 +3,7 @@ package com.rudhraa.library.Controller;
 import com.rudhraa.library.DTO.BookRequestDTO;
 import com.rudhraa.library.DTO.BookResponseDTO;
 import com.rudhraa.library.Service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<BookResponseDTO> addBook(
-            @RequestBody BookRequestDTO dto) {
+            @Valid @RequestBody BookRequestDTO dto) {
 
         return ResponseEntity.ok(bookService.addBook(dto));
     }
@@ -41,7 +42,7 @@ public class BookController {
     @PutMapping("/update")
     public ResponseEntity<BookResponseDTO> update(
             @RequestParam Long id,
-            @RequestBody BookRequestDTO dto) {
+           @Valid @RequestBody BookRequestDTO dto) {
 
         return ResponseEntity.ok(bookService.update(id, dto));
     }

@@ -3,6 +3,7 @@ package com.rudhraa.library.Controller;
 import com.rudhraa.library.DTO.MemberRequestDTO;
 import com.rudhraa.library.DTO.MemberResponseDTO;
 import com.rudhraa.library.Service.MemberService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class MemberController {
 
     @PostMapping
     public ResponseEntity<MemberResponseDTO> addMember(
-            @RequestBody MemberRequestDTO dto) {
+            @Valid @RequestBody MemberRequestDTO dto) {
 
         return ResponseEntity.ok(memberService.addMember(dto));
     }
@@ -41,7 +42,7 @@ public class MemberController {
     @PutMapping("/update")
     public ResponseEntity<MemberResponseDTO> update(
             @RequestParam Long id,
-            @RequestBody MemberRequestDTO dto) {
+            @Valid @RequestBody MemberRequestDTO dto) {
 
         return ResponseEntity.ok(memberService.update(id, dto));
     }

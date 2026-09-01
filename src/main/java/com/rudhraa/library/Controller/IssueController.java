@@ -3,6 +3,7 @@ package com.rudhraa.library.Controller;
 import com.rudhraa.library.DTO.IssueRequestDTO;
 import com.rudhraa.library.DTO.IssueResponseDTO;
 import com.rudhraa.library.Service.IssueService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class IssueController {
 
     @PostMapping
     public ResponseEntity<IssueResponseDTO> issueBook(
-            @RequestBody IssueRequestDTO dto) {
+            @Valid @RequestBody IssueRequestDTO dto) {
 
         return ResponseEntity.ok(issueService.issueBook(dto));
     }
@@ -40,7 +41,7 @@ public class IssueController {
 
     @PostMapping("/return")
     public ResponseEntity<IssueResponseDTO> returnBook(
-            @RequestParam Long id) {
+            @Valid @RequestParam Long id) {
 
         return ResponseEntity.ok(issueService.returnBook(id));
     }
