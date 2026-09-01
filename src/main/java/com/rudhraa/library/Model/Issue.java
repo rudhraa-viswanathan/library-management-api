@@ -13,9 +13,13 @@ public class Issue {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private long bookId;
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Books book;
 
-    private long memberId;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Members member;
 
     private LocalDate issueDate;
 
@@ -26,10 +30,10 @@ public class Issue {
     public Issue() {
     }
 
-    public Issue(Long id, long bookId, long memberId, LocalDate issueDate, LocalDate dueDate, LocalDate returnDate) {
+    public Issue(Long id, Books book, Members member, LocalDate issueDate, LocalDate dueDate, LocalDate returnDate) {
         this.id = id;
-        this.bookId = bookId;
-        this.memberId = memberId;
+        this.book = book;
+        this.member = member;
         this.issueDate = issueDate;
         this.dueDate = dueDate;
         this.returnDate = returnDate;
@@ -43,20 +47,20 @@ public class Issue {
         this.id = id;
     }
 
-    public long getBookId() {
-        return bookId;
+    public Books getBook() {
+        return book;
     }
 
-    public void setBookId(long bookId) {
-        this.bookId = bookId;
+    public void setBook(Books book) {
+        this.book = book;
     }
 
-    public long getMemberId() {
-        return memberId;
+    public Members getMember() {
+        return member;
     }
 
-    public void setMemberId(long memberId) {
-        this.memberId = memberId;
+    public void setMember(Members member) {
+        this.member = member;
     }
 
     public LocalDate getIssueDate() {

@@ -2,9 +2,10 @@ package com.rudhraa.library.Service;
 
 import com.rudhraa.library.Model.Books;
 import com.rudhraa.library.Model.Issue;
+import com.rudhraa.library.Model.Members;
+import com.rudhraa.library.Repository.BookRepository;
 import com.rudhraa.library.Repository.IssueRepository;
 import com.rudhraa.library.Repository.MemberRepository;
-import com.rudhraa.library.Repository.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,17 +30,18 @@ public class IssueService {
 
     public Issue issueBook(Issue issue) {
 
-        Books book = bookRepository.findById(issue.getBookId())
+        Books book = bookRepository.findById(issue.getBook().getId())
                 .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        Members member = memberRepository.findById(issue.getMember().getId())
+                .orElseThrow(() -> new RuntimeException("Member not found"));
 
         if (!book.isAvailable()) {
             throw new RuntimeException("Book is already issued");
         }
 
-        if (!memberRepository.existsById(issue.getMemberId())) {
-            throw new RuntimeException("Member not found");
-        }
-
+        issue.setBook(book);
+        issue.setMember(member);
         issue.setIssueDate(LocalDate.now());
         issue.setReturnDate(null);
 
@@ -66,8 +68,7 @@ public class IssueService {
             throw new RuntimeException("Book has already been returned");
         }
 
-        Books book = bookRepository.findById(issue.getBookId())
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+        Books book = issue.getBook();
 
         book.setAvailable(true);
         bookRepository.save(book);
