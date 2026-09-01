@@ -1,11 +1,14 @@
 package com.rudhraa.library.Service;
+
+import com.rudhraa.library.DTO.MemberRequestDTO;
+import com.rudhraa.library.DTO.MemberResponseDTO;
 import com.rudhraa.library.Exception.ResourceNotFoundException;
+import com.rudhraa.library.Mapper.MemberMapper;
 import com.rudhraa.library.Model.Members;
 import com.rudhraa.library.Repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MemberService {
@@ -16,38 +19,58 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public Members add(Members members){
-        return memberRepository.save(members);
+    public MemberResponseDTO addMember(MemberRequestDTO dto) {
+
+        Members member = MemberMapper.toEntity(dto);
+
+        Members savedMember = memberRepository.save(member);
+
+        return MemberMapper.toResponseDTO(savedMember);
     }
 
-    public List<Members> showAll(){
-        return memberRepository.findAll();
+    public List<MemberResponseDTO> getAll() {
+
+        return memberRepository.findAll()
+                .stream()
+                .map(MemberMapper::toResponseDTO)
+                .toList();
     }
 
-    public Members showById(Long id){
+    public MemberResponseDTO getMemberById(Long id) {
 
-        return memberRepository.findById(id)
+        Members member = memberRepository.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Book not found"));
+                        new ResourceNotFoundException("Member not found"));
+
+        return MemberMapper.toResponseDTO(member);
     }
 
-    public Members update(Long id, Members members){
-        Members existingMember = memberRepository.findById(id)
-                .orElseThrow(()-> new ResourceNotFoundException("Id not found"));
+    public MemberResponseDTO update(Long id, MemberRequestDTO dto) {
 
-        existingMember.setName(members.getName());
-        existingMember.setEmail(members.getEmail());
-        existingMember.setPhone(members.getPhone());
-        existingMember.setAddress(members.getAddress());
+        Members member = memberRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Member not found"));
 
-        return memberRepository.save(existingMember);
+        member.setName(dto.getName());
+        member.setEmail(dto.getEmail());
+        member.setPhone(dto.getPhone());
+        member.setAddress(dto.getAddress());
+
+        Members updatedMember = memberRepository.save(member);
+
+        return MemberMapper.toResponseDTO(updatedMember);
     }
 
-    public String delete(Long id){
-        if(!memberRepository.existsById(id)){
-            return "Id not found";
-        }
-        memberRepository.deleteById(id);
-        return "Member deleted successfully";
+    public MemberResponseDTO delete(Long id) {
+
+        Members member = memberRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Member not found"));
+
+        MemberResponseDTO response = MemberMapper.toResponseDTO(member);
+
+        memberRepository.delete(member);
+
+        return response;
     }
 }

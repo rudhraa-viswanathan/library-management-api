@@ -1,5 +1,11 @@
 package com.rudhraa.library.Service;
 
+import com.rudhraa.library.DTO.IssueRequestDTO;
+import com.rudhraa.library.DTO.IssueResponseDTO;
+import com.rudhraa.library.Exception.BookAlreadyReturnedException;
+import com.rudhraa.library.Exception.BookNotAvailableException;
+import com.rudhraa.library.Exception.ResourceNotFoundException;
+import com.rudhraa.library.Mapper.IssueMapper;
 import com.rudhraa.library.Model.Books;
 import com.rudhraa.library.Model.Issue;
 import com.rudhraa.library.Model.Members;
@@ -7,12 +13,9 @@ import com.rudhraa.library.Repository.BookRepository;
 import com.rudhraa.library.Repository.IssueRepository;
 import com.rudhraa.library.Repository.MemberRepository;
 import org.springframework.stereotype.Service;
-import com.rudhraa.library.Exception.BookAlreadyReturnedException;
-import com.rudhraa.library.Exception.BookNotAvailableException;
-import com.rudhraa.library.Exception.ResourceNotFoundException;
+
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class IssueService {
@@ -30,55 +33,74 @@ public class IssueService {
         this.memberRepository = memberRepository;
     }
 
-    public Issue issueBook(Issue issue) {
+    public IssueResponseDTO issueBook(IssueRequestDTO dto) {
 
-        Books book = bookRepository.findById(issue.getBook().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+        Books book = bookRepository.findById(dto.getBookId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Book not found"));
 
-        Members member = memberRepository.findById(issue.getMember().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Member not found"));
+        Members member = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Member not found"));
 
         if (!book.isAvailable()) {
-            throw new BookNotAvailableException("Book is already issued");
+            throw new BookNotAvailableException(
+                    "Book is already issued");
         }
+
+        Issue issue = new Issue();
 
         issue.setBook(book);
         issue.setMember(member);
         issue.setIssueDate(LocalDate.now());
+        issue.setDueDate(dto.getDueDate());
         issue.setReturnDate(null);
 
         book.setAvailable(false);
         bookRepository.save(book);
 
-        return issueRepository.save(issue);
+        Issue savedIssue = issueRepository.save(issue);
+
+        return IssueMapper.toResponseDTO(savedIssue);
     }
 
-    public List<Issue> getAllIssues() {
-        return issueRepository.findAll();
+    public List<IssueResponseDTO> getAll() {
+
+        return issueRepository.findAll()
+                .stream()
+                .map(IssueMapper::toResponseDTO)
+                .toList();
     }
 
-    public Issue getIssueById(Long id) {
-        return issueRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Book not found"));
-    }
-
-    public Issue returnBook(Long id) {
+    public IssueResponseDTO getById(Long id) {
 
         Issue issue = issueRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Issue record not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Issue not found"));
+
+        return IssueMapper.toResponseDTO(issue);
+    }
+
+    public IssueResponseDTO returnBook(Long id) {
+
+        Issue issue = issueRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Issue not found"));
 
         if (issue.getReturnDate() != null) {
-            throw new BookAlreadyReturnedException("Book has already been returned");
+            throw new BookAlreadyReturnedException(
+                    "Book has already been returned");
         }
-
-        Books book = issue.getBook();
-
-        book.setAvailable(true);
-        bookRepository.save(book);
 
         issue.setReturnDate(LocalDate.now());
 
-        return issueRepository.save(issue);
+        Books book = issue.getBook();
+        book.setAvailable(true);
+
+        bookRepository.save(book);
+
+        Issue returnedIssue = issueRepository.save(issue);
+
+        return IssueMapper.toResponseDTO(returnedIssue);
     }
 }

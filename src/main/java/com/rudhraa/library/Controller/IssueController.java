@@ -1,6 +1,7 @@
 package com.rudhraa.library.Controller;
 
-import com.rudhraa.library.Model.Issue;
+import com.rudhraa.library.DTO.IssueRequestDTO;
+import com.rudhraa.library.DTO.IssueResponseDTO;
 import com.rudhraa.library.Service.IssueService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,23 +19,29 @@ public class IssueController {
     }
 
     @PostMapping
-    public ResponseEntity<?> issueBook(@RequestBody Issue issue) {
-        return ResponseEntity.ok(issueService.issueBook(issue));
+    public ResponseEntity<IssueResponseDTO> issueBook(
+            @RequestBody IssueRequestDTO dto) {
+
+        return ResponseEntity.ok(issueService.issueBook(dto));
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllIssues() {
-        return ResponseEntity.ok(issueService.getAllIssues());
+    public ResponseEntity<List<IssueResponseDTO>> getAll() {
+
+        return ResponseEntity.ok(issueService.getAll());
     }
 
-    @GetMapping("/getIssue")
-    public ResponseEntity<?> getIssue(@RequestParam Long id) {
+    @GetMapping("/getById")
+    public ResponseEntity<IssueResponseDTO> getById(
+            @RequestParam Long id) {
 
-        return ResponseEntity.ok(issueService.getIssueById(id));
+        return ResponseEntity.ok(issueService.getById(id));
     }
 
     @PostMapping("/return")
-    public ResponseEntity<?> returnBook(@RequestParam Long id) {
+    public ResponseEntity<IssueResponseDTO> returnBook(
+            @RequestParam Long id) {
+
         return ResponseEntity.ok(issueService.returnBook(id));
     }
 }

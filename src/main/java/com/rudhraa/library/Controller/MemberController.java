@@ -1,10 +1,12 @@
 package com.rudhraa.library.Controller;
 
-
-import com.rudhraa.library.Model.Members;
+import com.rudhraa.library.DTO.MemberRequestDTO;
+import com.rudhraa.library.DTO.MemberResponseDTO;
 import com.rudhraa.library.Service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -17,27 +19,37 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody Members members){
-        return ResponseEntity.ok(memberService.add(members));
+    public ResponseEntity<MemberResponseDTO> addMember(
+            @RequestBody MemberRequestDTO dto) {
+
+        return ResponseEntity.ok(memberService.addMember(dto));
     }
 
     @GetMapping
-    public ResponseEntity<?> getALl(){
-        return ResponseEntity.ok(memberService.showAll());
+    public ResponseEntity<List<MemberResponseDTO>> showAll() {
+
+        return ResponseEntity.ok(memberService.getAll());
     }
 
     @GetMapping("/getById")
-    public ResponseEntity<?> getById(@RequestParam Long id){
-        return ResponseEntity.ok(memberService.showById(id));
+    public ResponseEntity<MemberResponseDTO> getMemberById(
+            @RequestParam Long id) {
+
+        return ResponseEntity.ok(memberService.getMemberById(id));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestParam Long id, @RequestBody Members members){
-        return ResponseEntity.ok(memberService.update(id, members));
+    public ResponseEntity<MemberResponseDTO> update(
+            @RequestParam Long id,
+            @RequestBody MemberRequestDTO dto) {
+
+        return ResponseEntity.ok(memberService.update(id, dto));
     }
 
     @DeleteMapping("/del")
-    public ResponseEntity<?> delete(@RequestParam Long id){
+    public ResponseEntity<MemberResponseDTO> delete(
+            @RequestParam Long id) {
+
         return ResponseEntity.ok(memberService.delete(id));
     }
 }
