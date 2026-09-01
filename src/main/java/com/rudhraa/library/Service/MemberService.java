@@ -1,4 +1,5 @@
 package com.rudhraa.library.Service;
+import com.rudhraa.library.Exception.ResourceNotFoundException;
 import com.rudhraa.library.Model.Members;
 import com.rudhraa.library.Repository.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,16 @@ public class MemberService {
         return memberRepository.findAll();
     }
 
-    public Optional<Members> showById(Long id){
-        return memberRepository.findById(id);
+    public Members showById(Long id){
+
+        return memberRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Book not found"));
     }
 
     public Members update(Long id, Members members){
         Members existingMember = memberRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Id not found"));
+                .orElseThrow(()-> new ResourceNotFoundException("Id not found"));
 
         existingMember.setName(members.getName());
         existingMember.setEmail(members.getEmail());

@@ -1,7 +1,7 @@
 package com.rudhraa.library.Service;
+import com.rudhraa.library.Exception.ResourceNotFoundException;
 import com.rudhraa.library.Model.Books;
 import com.rudhraa.library.Repository.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,13 +27,16 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public Optional<Books> getBookByID(Long id){
-        return bookRepository.findById(id);
+    public Books getBookByID(Long id) {
+
+        return bookRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Book not found"));
     }
 
     public Books update(Long id, Books books){
         Books exisitingBook = bookRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Book is not Found"));
+                .orElseThrow(()->new ResourceNotFoundException("Book is not Found"));
 
         exisitingBook.setTitle(books.getTitle());
         exisitingBook.setAuthor(books.getAuthor());

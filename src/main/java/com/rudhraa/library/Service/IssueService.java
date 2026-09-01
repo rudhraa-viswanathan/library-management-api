@@ -7,7 +7,9 @@ import com.rudhraa.library.Repository.BookRepository;
 import com.rudhraa.library.Repository.IssueRepository;
 import com.rudhraa.library.Repository.MemberRepository;
 import org.springframework.stereotype.Service;
-
+import com.rudhraa.library.Exception.BookAlreadyReturnedException;
+import com.rudhraa.library.Exception.BookNotAvailableException;
+import com.rudhraa.library.Exception.ResourceNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -31,13 +33,13 @@ public class IssueService {
     public Issue issueBook(Issue issue) {
 
         Books book = bookRepository.findById(issue.getBook().getId())
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
         Members member = memberRepository.findById(issue.getMember().getId())
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found"));
 
         if (!book.isAvailable()) {
-            throw new RuntimeException("Book is already issued");
+            throw new BookNotAvailableException("Book is already issued");
         }
 
         issue.setBook(book);
@@ -55,17 +57,19 @@ public class IssueService {
         return issueRepository.findAll();
     }
 
-    public Optional<Issue> getIssueById(Long id) {
-        return issueRepository.findById(id);
+    public Issue getIssueById(Long id) {
+        return issueRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Book not found"));
     }
 
     public Issue returnBook(Long id) {
 
         Issue issue = issueRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Issue record not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Issue record not found"));
 
         if (issue.getReturnDate() != null) {
-            throw new RuntimeException("Book has already been returned");
+            throw new BookAlreadyReturnedException("Book has already been returned");
         }
 
         Books book = issue.getBook();
