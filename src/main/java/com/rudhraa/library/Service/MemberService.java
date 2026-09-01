@@ -1,6 +1,6 @@
 package com.rudhraa.library.Service;
 import com.rudhraa.library.Model.Members;
-import com.rudhraa.library.Repository.MemberRespository;
+import com.rudhraa.library.Repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,26 +9,26 @@ import java.util.Optional;
 @Service
 public class MemberService {
 
-    private final MemberRespository memberRespository;
+    private final MemberRepository memberRepository;
 
-    public MemberService(MemberRespository memberRespository) {
-        this.memberRespository = memberRespository;
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
     public Members add(Members members){
-        return memberRespository.save(members);
+        return memberRepository.save(members);
     }
 
     public List<Members> showAll(){
-        return memberRespository.findAll();
+        return memberRepository.findAll();
     }
 
     public Optional<Members> showById(Long id){
-        return memberRespository.findById(id);
+        return memberRepository.findById(id);
     }
 
     public Members update(Long id, Members members){
-        Members existingMember = memberRespository.findById(id)
+        Members existingMember = memberRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Id not found"));
 
         existingMember.setName(members.getName());
@@ -36,14 +36,14 @@ public class MemberService {
         existingMember.setPhone(members.getPhone());
         existingMember.setAddress(members.getAddress());
 
-        return memberRespository.save(existingMember);
+        return memberRepository.save(existingMember);
     }
 
     public String delete(Long id){
-        if(!memberRespository.existsById(id)){
+        if(!memberRepository.existsById(id)){
             return "Id not found";
         }
-        memberRespository.deleteById(id);
+        memberRepository.deleteById(id);
         return "Member deleted successfully";
     }
 }

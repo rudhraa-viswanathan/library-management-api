@@ -1,12 +1,9 @@
 package com.rudhraa.library.Repository;
 
-
-import com.rudhraa.library.Model.Members;
+import com.rudhraa.library.Model.Issue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Member;
-
 @Repository
-public interface MemberRespository extends JpaRepository<Members, Long> {
+public interface IssueRepository extends JpaRepository<Issue, Long> {
 }
