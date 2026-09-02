@@ -4,6 +4,8 @@ import com.rudhraa.library.DTO.BookRequestDTO;
 import com.rudhraa.library.DTO.BookResponseDTO;
 import com.rudhraa.library.Service.BookService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +29,26 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookResponseDTO>> showAll() {
+    public ResponseEntity<Page<BookResponseDTO>> showAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
 
-        return ResponseEntity.ok(bookService.getAll());
+        return ResponseEntity.ok(bookService.getAll(PageRequest.of(page, size)));
+    }
+
+    @GetMapping("/searchTitle")
+    public ResponseEntity<Page<BookResponseDTO>> searchByTitle(@RequestParam(required = false) String title,
+                                                               @RequestParam(required = false, defaultValue = "0") int pageNo,
+                                                               @RequestParam(required = false, defaultValue = "5") int pageSize){
+        return ResponseEntity.ok(bookService.searchByTitle(title, PageRequest.of(pageNo, pageSize)));
+    }
+
+
+    @GetMapping("/searchCategory")
+    public ResponseEntity<Page<BookResponseDTO>> searchByCategory(@RequestParam(required = false) String category,
+                                                               @RequestParam(required = false, defaultValue = "0") int pageNo,
+                                                               @RequestParam(required = false, defaultValue = "5") int pageSize){
+        return ResponseEntity.ok(bookService.searchByCategory(category, PageRequest.of(pageNo, pageSize)));
     }
 
     @GetMapping("/getBook")

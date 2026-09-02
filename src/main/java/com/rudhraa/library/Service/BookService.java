@@ -6,6 +6,11 @@ import com.rudhraa.library.Exception.ResourceNotFoundException;
 import com.rudhraa.library.Mapper.BookMapper;
 import com.rudhraa.library.Model.Books;
 import com.rudhraa.library.Repository.BookRepository;
+import org.jspecify.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,12 +35,26 @@ public class BookService {
         return BookMapper.toResponseDTO(savedBook);
     }
 
-    public List<BookResponseDTO> getAll() {
+    public Page<BookResponseDTO> getAll(Pageable pageable) {
 
-        return bookRepository.findAll()
-                .stream()
-                .map(BookMapper::toResponseDTO)
-                .toList();
+        return bookRepository.findAll(pageable)
+                .map(BookMapper::toResponseDTO);
+    }
+
+
+    public Page<BookResponseDTO> searchByTitle(String title, Pageable pageable) {
+
+        return bookRepository.searchByTitleContainingIgnoreCase(title, pageable)
+                .map(BookMapper::toResponseDTO);
+
+    }
+
+
+    public Page<BookResponseDTO> searchByCategory(String category, Pageable pageable) {
+
+        return bookRepository.searchByCategoryIgnoreCase(category, pageable)
+                .map(BookMapper::toResponseDTO);
+
     }
 
     public BookResponseDTO getBookByID(Long id) {
@@ -73,4 +92,5 @@ public class BookService {
 
         return BookMapper.toResponseDTO(book);
     }
+
 }
