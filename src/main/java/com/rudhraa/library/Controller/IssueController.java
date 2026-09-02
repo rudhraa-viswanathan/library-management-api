@@ -4,6 +4,8 @@ import com.rudhraa.library.DTO.IssueRequestDTO;
 import com.rudhraa.library.DTO.IssueResponseDTO;
 import com.rudhraa.library.Service.IssueService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +25,7 @@ public class IssueController {
     public ResponseEntity<IssueResponseDTO> issueBook(
             @Valid @RequestBody IssueRequestDTO dto) {
 
-        return ResponseEntity.ok(issueService.issueBook(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(issueService.issueBook(dto));
     }
 
     @GetMapping
@@ -32,16 +34,16 @@ public class IssueController {
         return ResponseEntity.ok(issueService.getAll());
     }
 
-    @GetMapping("/getById")
+    @GetMapping("/{id}")
     public ResponseEntity<IssueResponseDTO> getById(
-            @RequestParam Long id) {
+            @PathVariable Long id) {
 
         return ResponseEntity.ok(issueService.getById(id));
     }
 
-    @PostMapping("/return")
+    @PostMapping("/{id}/return")
     public ResponseEntity<IssueResponseDTO> returnBook(
-            @Valid @RequestParam Long id) {
+            @Valid @PathVariable Long id) {
 
         return ResponseEntity.ok(issueService.returnBook(id));
     }

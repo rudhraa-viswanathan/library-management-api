@@ -4,6 +4,7 @@ import com.rudhraa.library.DTO.MemberRequestDTO;
 import com.rudhraa.library.DTO.MemberResponseDTO;
 import com.rudhraa.library.Service.MemberService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class MemberController {
     public ResponseEntity<MemberResponseDTO> addMember(
             @Valid @RequestBody MemberRequestDTO dto) {
 
-        return ResponseEntity.ok(memberService.addMember(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(memberService.addMember(dto));
     }
 
     @GetMapping
@@ -32,25 +33,25 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getAll());
     }
 
-    @GetMapping("/getById")
+    @GetMapping("/{id}")
     public ResponseEntity<MemberResponseDTO> getMemberById(
-            @RequestParam Long id) {
+            @PathVariable Long id) {
 
         return ResponseEntity.ok(memberService.getMemberById(id));
     }
 
-    @PutMapping("/update")
+    @PutMapping("/{id}")
     public ResponseEntity<MemberResponseDTO> update(
-            @RequestParam Long id,
+            @PathVariable Long id,
             @Valid @RequestBody MemberRequestDTO dto) {
 
         return ResponseEntity.ok(memberService.update(id, dto));
     }
 
-    @DeleteMapping("/del")
+    @DeleteMapping("/{id}")
     public ResponseEntity<MemberResponseDTO> delete(
-            @RequestParam Long id) {
-
-        return ResponseEntity.ok(memberService.delete(id));
+            @PathVariable Long id) {
+        memberService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

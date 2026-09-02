@@ -6,6 +6,7 @@ import com.rudhraa.library.Service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,9 @@ public class BookController {
     public ResponseEntity<BookResponseDTO> addBook(
             @Valid @RequestBody BookRequestDTO dto) {
 
-        return ResponseEntity.ok(bookService.addBook(dto));
+        //return ResponseEntity.ok(bookService.addBook(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.addBook(dto));
+
     }
 
     @GetMapping
@@ -36,7 +39,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.getAll(PageRequest.of(page, size)));
     }
 
-    @GetMapping("/searchTitle")
+    @GetMapping("/search/title")
     public ResponseEntity<Page<BookResponseDTO>> searchByTitle(@RequestParam(required = false) String title,
                                                                @RequestParam(required = false, defaultValue = "0") int pageNo,
                                                                @RequestParam(required = false, defaultValue = "5") int pageSize){
@@ -44,32 +47,32 @@ public class BookController {
     }
 
 
-    @GetMapping("/searchCategory")
+    @GetMapping("/search/category")
     public ResponseEntity<Page<BookResponseDTO>> searchByCategory(@RequestParam(required = false) String category,
                                                                @RequestParam(required = false, defaultValue = "0") int pageNo,
                                                                @RequestParam(required = false, defaultValue = "5") int pageSize){
         return ResponseEntity.ok(bookService.searchByCategory(category, PageRequest.of(pageNo, pageSize)));
     }
 
-    @GetMapping("/getBook")
+    @GetMapping("/{id}")
     public ResponseEntity<BookResponseDTO> showBook(
-            @RequestParam Long id) {
+            @PathVariable Long id) {
 
         return ResponseEntity.ok(bookService.getBookByID(id));
     }
 
-    @PutMapping("/update")
+    @PutMapping("/{id}")
     public ResponseEntity<BookResponseDTO> update(
-            @RequestParam Long id,
+            @PathVariable  Long id,
            @Valid @RequestBody BookRequestDTO dto) {
 
         return ResponseEntity.ok(bookService.update(id, dto));
     }
 
-    @DeleteMapping("/del")
+    @DeleteMapping("/{id}")
     public ResponseEntity<BookResponseDTO> delete(
-            @RequestParam Long id) {
-
-        return ResponseEntity.ok(bookService.delete(id));
+            @PathVariable Long id) {
+        bookService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
