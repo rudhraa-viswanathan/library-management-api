@@ -1,4 +1,4 @@
-package com.rudhraa.library.Exception;
+package com.rudhraa.library.DTO;
 
 public class ErrorResponse {
 

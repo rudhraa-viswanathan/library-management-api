@@ -5,6 +5,7 @@ import com.rudhraa.library.DTO.UserRequestDTO;
 import com.rudhraa.library.Model.User;
 import com.rudhraa.library.Security.JwtService;
 import com.rudhraa.library.Service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +29,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<User> register(
-            @RequestBody UserRequestDTO request) {
+           @Valid @RequestBody UserRequestDTO request) {
 
         return ResponseEntity.ok(userService.register(request));
     }
